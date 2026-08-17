@@ -1,0 +1,11 @@
+# Cloudflare Pages átirányítások.
+# A www → apex átirányítást a Cloudflare DNS/Redirect Rules oldalán állítsd be, nem itt.
+
+/arak                       /weboldal-keszites-arak     301
+/weboldal-keszites-ar       /weboldal-keszites-arak     301
+/landing-page               /landing-page-keszites      301
+/referenciak                /munkaink                   301
+/rolunk                     /rolam                      301
+/kapcsolat                  /#kapcsolat                 301
+/adatvedelem                /adatkezelesi-tajekoztato   301
+/cookie                     /cookie-tajekoztato         301

@@ -1,0 +1,183 @@
+# Sveltia CMS konfiguráció — Lead2Go
+#
+# BEÁLLÍTÁS ÉLESÍTÉS ELŐTT:
+#   1. backend.repo → a te GitHub felhasználóneved/repónév
+#   2. backend.branch → a Cloudflare Pages által figyelt ág (általában main)
+#   3. GitHub OAuth: Cloudflare Pages-en a legegyszerűbb a Sveltia saját
+#      auth workere, vagy GitHub App. Részletek: github.com/sveltia/sveltia-cms
+#
+# FONTOS ELVÁRÁS-KEZELÉS: itt a TARTALOM szerkeszthető (szöveg, ár, elérhetőség,
+# referenciák, vélemények), az ELRENDEZÉS nem. Ezt mondd ki az ügyfélnek előre.
+
+backend:
+  name: github
+  repo: [[KITÖLTENDŐ: felhasznalonev/lead2go]]
+  branch: main
+
+locale: hu
+publish_mode: simple
+media_folder: public/img/feltoltes
+public_folder: /img/feltoltes
+
+collections:
+  - name: beallitasok
+    label: Alapadatok és tartalom
+    files:
+      - name: site
+        label: Az oldal adatai
+        file: src/data/site.json
+        description: Minden üzleti adat egy helyen. Ami üresen marad, azt az oldal nem jeleníti meg.
+        fields:
+          - { name: _olvass_el, label: Megjegyzés, widget: hidden }
+
+          - name: ceg
+            label: Cégadatok
+            widget: object
+            fields:
+              - { name: marka, label: Márkanév, widget: string }
+              - { name: jogiNev, label: Teljes cégnév / EV név, widget: string }
+              - { name: forma, label: Cégforma, widget: string }
+              - { name: kepviselo, label: Képviselő neve, widget: string }
+              - { name: szekhely, label: Székhely, widget: string }
+              - { name: adoszam, label: Adószám, widget: string }
+              - { name: nyilvantartasiSzam, label: Nyilvántartási / cégjegyzékszám, widget: string }
+              - { name: mukodesKezdete, label: Működés kezdete (év), widget: number, value_type: int }
+
+          - name: kapcsolat
+            label: Elérhetőség
+            widget: object
+            fields:
+              - { name: url, label: Domain (teljes URL), widget: string }
+              - { name: email, label: E-mail, widget: string }
+              - { name: telefon, label: Telefonszám, widget: string }
+              - { name: nyitvatartas, label: Ügyfélfogadás, widget: string }
+              - { name: valaszido, label: Ígért válaszidő, widget: string }
+              - { name: naptarUrl, label: Naptár beágyazási link (Cal.com), widget: string, required: false }
+              - { name: naptarNev, label: Naptár szolgáltató neve, widget: string, required: false }
+              - { name: whatsapp, label: WhatsApp link, widget: string, required: false }
+              - { name: messenger, label: Messenger link, widget: string, required: false }
+
+          - name: cta
+            label: Gombfeliratok
+            widget: object
+            fields:
+              - { name: elsodleges, label: Elsődleges CTA (végig ugyanaz!), widget: string }
+              - { name: masodlagos, label: Másodlagos út, widget: string }
+              - { name: arakLink, label: Árak link szövege, widget: string }
+
+          - name: hero
+            label: Nyitóblokk
+            widget: object
+            fields:
+              - { name: mikrocimke, label: Mikrocímke a főcím felett, widget: string }
+              - { name: cimSor1, label: Főcím 1. sor, widget: string }
+              - { name: cimSor2, label: Főcím 2. sor (kontúros), widget: string }
+              - { name: cimSor3, label: Főcím 3. sor (kobalt), widget: string }
+              - { name: alcim, label: Alcím (max 20 szó), widget: text }
+              - { name: mikrogaranciak, label: Mikrogaranciák, widget: list, field: { name: szoveg, label: Szöveg, widget: string } }
+              - { name: kepAlt, label: Hero kép alt szövege, widget: string, required: false }
+              - { name: kepCimke, label: Böngészőkeret felirata, widget: string, required: false }
+
+          - name: bizonyitek
+            label: Bizonyítéksáv
+            widget: object
+            hint: Ha nincs VALÓS szám, hagyd üresen — akkor a garanciasáv jelenik meg helyette. Kitalált adat tilos.
+            fields:
+              - { name: _megjegyzes, widget: hidden, required: false }
+              - { name: googleErtekeles, label: Google-értékelés (pl. 5,0), widget: string, required: false }
+              - { name: googleErtekelesDb, label: Vélemények száma, widget: number, required: false, value_type: int }
+              - { name: googleUrl, label: Google-értékelés linkje, widget: string, required: false }
+              - name: szamok
+                label: Számok (max 3)
+                widget: list
+                required: false
+                fields:
+                  - { name: ertek, label: Szám, widget: string }
+                  - { name: cimke, label: Mit jelent, widget: string }
+                  - { name: forras, label: Mérési mód (pl. „GA4, 30 nap, 2026.06."), widget: string, required: false }
+              - name: logok
+                label: Ügyféllogók
+                widget: list
+                required: false
+                fields:
+                  - { name: nev, label: Ügyfél neve, widget: string }
+                  - { name: kep, label: Logó, widget: image }
+                  - { name: link, label: Élő oldal linkje, widget: string }
+
+          - name: referenciak
+            label: Referenciák
+            widget: list
+            fields:
+              - { name: nev, label: Ügyfél neve, widget: string }
+              - { name: iparag, label: Iparág, város, widget: string }
+              - { name: link, label: Élő oldal linkje, widget: string, required: false }
+              - { name: leiras, label: Egy mondat a projektről, widget: text, required: false }
+              - { name: kep, label: Képernyőkép, widget: image, required: false }
+              - { name: elesites, label: Élesítés dátuma, widget: string, required: false }
+              - name: eredmeny
+                label: Mért eredmények
+                widget: list
+                required: false
+                hint: Csak valós, mért szám kerülhet ide. Ha nincs, hagyd üresen.
+                fields:
+                  - { name: ertek, label: Szám, widget: string }
+                  - { name: cimke, label: Mit jelent, widget: string }
+                  - { name: forras, label: Mérési mód és időszak, widget: string, required: false }
+
+          - name: arak
+            label: Árazás
+            widget: object
+            hint: Amíg mindhárom ár üres, az „ártényezők" változat jelenik meg. Kitöltve 3 kártyás nyilvános árazás lesz.
+            fields:
+              - { name: _megjegyzes, widget: hidden, required: false }
+              - name: savok
+                label: Ársávok
+                widget: list
+                fields:
+                  - { name: nev, label: Csomag neve, widget: string }
+                  - { name: ar, label: Ár (pl. „390 000 Ft-tól"), widget: string, required: false }
+                  - { name: kinek, label: Kinek szól, widget: string }
+                  - { name: tartalom, label: Mit tartalmaz, widget: list, field: { name: tetel, label: Tétel, widget: string } }
+                  - { name: atfutas, label: Átfutási idő, widget: string }
+                  - { name: kiemelt, label: Kiemelt csomag?, widget: boolean, default: false }
+              - name: havidij
+                label: Havidíj
+                widget: object
+                fields:
+                  - { name: ar, label: Havidíj összege, widget: string, required: false }
+                  - { name: tartalom, label: Mit tartalmaz, widget: text }
+              - { name: artenyezok, label: Amiből az ár összeáll, widget: list, field: { name: tetel, label: Tétel, widget: string } }
+              - { name: fizetes, label: Fizetési ütemezés, widget: list, field: { name: tetel, label: Tétel, widget: string } }
+
+          - name: velemenyek
+            label: Ügyfélvélemények
+            widget: list
+            required: false
+            hint: Csak valós, írásban engedélyezett vélemény. Névvel, céggel, lehetőleg fotóval.
+            fields:
+              - { name: szoveg, label: A vélemény szövege, widget: text }
+              - { name: nev, label: Teljes név, widget: string }
+              - { name: ceg, label: Cég / pozíció, widget: string }
+              - { name: foto, label: Arckép, widget: image, required: false }
+              - { name: link, label: Élő oldal linkje, widget: string, required: false }
+
+          - name: meres
+            label: Mérés
+            widget: object
+            fields:
+              - { name: _megjegyzes, widget: hidden, required: false }
+              - { name: ga4Id, label: GA4 mérőkód (G-...), widget: string, required: false }
+              - { name: adsId, label: Google Ads azonosító (AW-...), widget: string, required: false }
+              - { name: adsKonverzioUrlap, label: Ads konverziócímke — űrlap, widget: string, required: false }
+              - { name: adsKonverzioTelefon, label: Ads konverziócímke — telefon, widget: string, required: false }
+              - { name: adsKonverzioNaptar, label: Ads konverziócímke — naptár, widget: string, required: false }
+              - { name: clarityId, label: Microsoft Clarity azonosító, widget: string, required: false }
+
+          - name: urlap
+            label: Űrlap backend
+            widget: object
+            fields:
+              - { name: _megjegyzes, widget: hidden, required: false }
+              - { name: szolgaltato, label: Szolgáltató, widget: select, options: ['web3forms', 'formspree', 'egyeb'] }
+              - { name: accessKey, label: Web3Forms access key, widget: string, required: false }
+              - { name: endpoint, label: Egyedi endpoint URL, widget: string, required: false }
